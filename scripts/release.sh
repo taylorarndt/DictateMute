@@ -37,11 +37,17 @@ eval "$(python3 - <<'PY'
 import json, os, shlex
 c = json.load(open(os.path.expanduser("~/.asc/config.json")))
 print("ASC_KEY_ID=" + shlex.quote(c["key_id"]))
-print("ASC_ISSUER=" + shlex.quote(c["issuer_id"]))
+print("ASC_ISSUER=" + shlex.quote(c.get("issuer_id") or ""))
 print("ASC_KEY_PATH=" + shlex.quote(os.path.expanduser(c["private_key_path"])))
 PY
 )"
-AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID" -authenticationKeyIssuerID "$ASC_ISSUER")
+# Team keys have an issuer ID. Individual keys do not, and the tools must not get one.
+AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID")
+NOTARY=(--key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID")
+if [[ -n "$ASC_ISSUER" ]]; then
+  AUTH+=(-authenticationKeyIssuerID "$ASC_ISSUER")
+  NOTARY+=(--issuer "$ASC_ISSUER")
+fi
 
 BUILD_NUMBER=$(git rev-list --count HEAD)
 DIST="$ROOT/dist/$VERSION"
@@ -81,7 +87,7 @@ fi
 say "Step 4 of 6: notarizing with Apple. This can take a few minutes."
 ZIP="$DIST/DictateMute.zip"
 ditto -c -k --keepParent "$APP" "$DIST/notarize.zip"
-xcrun notarytool submit "$DIST/notarize.zip" --key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID" --issuer "$ASC_ISSUER" --wait
+xcrun notarytool submit "$DIST/notarize.zip" "${NOTARY[@]}" --wait
 xcrun stapler staple "$APP"
 spctl --assess --type execute "$APP"
 say "Notarized and stapled."
