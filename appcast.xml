@@ -5,6 +5,15 @@
     <link>https://github.com/taylorarndt/DictateMute</link>
     <!-- ITEMS -->
     <item>
+      <title>Version 1.0.1</title>
+      <pubDate>Mon, 09 Nov 2026 14:41:13 +0000</pubDate>
+      <sparkle:version>8</sparkle:version>
+      <sparkle:shortVersionString>1.0.1</sparkle:shortVersionString>
+      <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
+      <sparkle:releaseNotesLink>https://github.com/taylorarndt/DictateMute/releases/tag/v1.0.1</sparkle:releaseNotesLink>
+      <enclosure url="https://github.com/taylorarndt/DictateMute/releases/download/v1.0.1/DictateMute.zip" sparkle:edSignature="nTNXXFLaF+ZlP2Bmpxifwx7MoBUL8EcTufstqTcFBI5zpORDV6npsDK+Ap1roOsAvAeZV3SI1MG0oUCiIiRxBg==" length="1518307" type="application/octet-stream"/>
+    </item>
+    <item>
       <title>Version 1.0.0</title>
       <pubDate>Mon, 09 Nov 2026 14:31:07 +0000</pubDate>
       <sparkle:version>5</sparkle:version>
