@@ -1,0 +1,74 @@
+name: Bug report
+description: Report something that does not work as expected.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please fill in as much as you can. For security problems, do not use this form. See the security policy instead.
+  - type: input
+    id: macos-version
+    attributes:
+      label: macOS version
+      description: Find it in the Apple menu, About This Mac.
+      placeholder: "For example, macOS 15.1"
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: DictateMute version
+      description: Shown in the DictateMute menu, or in Finder with Get Info on the app.
+      placeholder: "For example, 1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: discord-version
+    attributes:
+      label: Discord version
+      description: Find it in Discord, User Settings, at the bottom of the list.
+    validations:
+      required: true
+  - type: dropdown
+    id: full-screen
+    attributes:
+      label: Was the Discord window in full screen?
+      options:
+        - "No"
+        - "Yes"
+        - "Not sure"
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe what you saw or heard.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Describe what you expected to happen instead.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Join a Discord voice channel
+        2. Start dictation in Claude Code
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Log output
+      description: |
+        Open Console, start streaming, and filter by subsystem com.taylorarndt.DictateMute. Reproduce the problem, then paste the lines here. You can also run this in Terminal: log stream --predicate 'subsystem == "com.taylorarndt.DictateMute"'
+      render: text
+    validations:
+      required: false

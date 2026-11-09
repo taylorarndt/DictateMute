@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest an idea or ask for support for another app.
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Please open this issue before writing code, so we can agree on the approach first.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of request is this?
+      options:
+        - Support another dictation app
+        - Support another call app
+        - New feature or setting
+        - Accessibility improvement
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: app-name
+    attributes:
+      label: App name
+      description: If you want support for another app, name it here, for example Zoom, Slack, Microsoft Teams, or Superwhisper.
+    validations:
+      required: false
+  - type: textarea
+    id: problem
+    attributes:
+      label: The problem
+      description: What are you trying to do, and what gets in the way today?
+    validations:
+      required: true
+  - type: textarea
+    id: solution
+    attributes:
+      label: Your idea
+      description: Describe what you would like DictateMute to do.
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: App details
+      description: For another app, describe how it uses the microphone and how it can be muted, such as a menu item, a keyboard shortcut, or a button.
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: Contributing
+      options:
+        - label: I would like to work on this myself
+          required: false
