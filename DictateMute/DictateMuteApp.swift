@@ -9,11 +9,12 @@ struct DictateMuteApp: App {
 
     var body: some Scene {
         MenuBarExtra {
-            MenuBarView(engine: appDelegate.engine, updater: appDelegate.updater)
+            MenuBarMenu(engine: appDelegate.engine, updater: appDelegate.updater) { appDelegate.showWindow() }
         } label: {
             MenuBarIcon(engine: appDelegate.engine)
         }
-        .menuBarExtraStyle(.window)
+        // A standard menu, so VoiceOver can open it. The window style did not open with VoiceOver.
+        .menuBarExtraStyle(.menu)
     }
 }
 
