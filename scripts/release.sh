@@ -32,15 +32,25 @@ if git rev-parse -q --verify "refs/tags/v$VERSION" >/dev/null; then
   exit 1
 fi
 
-# App Store Connect key, read from the asc config. Values are never printed.
+# App Store Connect key. The asc tool keeps it in the login keychain (service "asc",
+# account "asc:credential:<name>"); the default name is in ~/.asc/config.json.
+# Values are never printed.
 eval "$(python3 - <<'PY'
-import json, os, shlex
-c = json.load(open(os.path.expanduser("~/.asc/config.json")))
+import json, os, shlex, subprocess
+cfg = json.load(open(os.path.expanduser("~/.asc/config.json")))
+name = cfg.get("default_key_name") or "Techopolis"
+raw = subprocess.run(["security", "find-generic-password", "-s", "asc", "-a", "asc:credential:" + name, "-w"],
+                     capture_output=True, text=True, check=True).stdout
+c = json.loads(raw)
+path = os.path.expanduser(c.get("private_key_path") or "")
+if not os.path.isfile(path):
+    path = os.path.expanduser("~/.asc/keys/AuthKey_%s.p8" % c["key_id"])
 print("ASC_KEY_ID=" + shlex.quote(c["key_id"]))
 print("ASC_ISSUER=" + shlex.quote(c.get("issuer_id") or ""))
-print("ASC_KEY_PATH=" + shlex.quote(os.path.expanduser(c["private_key_path"])))
+print("ASC_KEY_PATH=" + shlex.quote(path))
 PY
 )"
+[[ -f "$ASC_KEY_PATH" ]] || { say "Could not find the App Store Connect key file."; exit 1; }
 # Team keys have an issuer ID. Individual keys do not, and the tools must not get one.
 AUTH=(-allowProvisioningUpdates -authenticationKeyPath "$ASC_KEY_PATH" -authenticationKeyID "$ASC_KEY_ID")
 NOTARY=(--key "$ASC_KEY_PATH" --key-id "$ASC_KEY_ID")
