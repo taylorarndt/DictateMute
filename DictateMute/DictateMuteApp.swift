@@ -1,4 +1,5 @@
 import AppKit
+import ServiceManagement
 import Sparkle
 import SwiftUI
 
@@ -35,8 +36,41 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
     var updater: SPUUpdater { updaterController.updater }
 
+    private var window: NSWindow?
+
     func applicationDidFinishLaunching(_ notification: Notification) {
+        let defaults = UserDefaults.standard
+        let firstLaunch = !defaults.bool(forKey: "didFirstLaunch")
+        if firstLaunch {
+            defaults.set(true, forKey: "didFirstLaunch")
+            // DictateMute only helps if it is always running, so Launch at Login starts on.
+            // Only for an installed copy, so test builds never add themselves.
+            if Bundle.main.bundlePath.hasPrefix("/Applications/") {
+                try? SMAppService.mainApp.register()
+            }
+            showWindow()
+        }
         if !engine.hasPermission { engine.requestPermission() }
+    }
+
+    /// Opening DictateMute again (Spotlight, Finder, Launchpad) shows its window.
+    /// This is the way in when the menu bar is full and macOS hides the icon.
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        showWindow()
+        return true
+    }
+
+    func showWindow() {
+        if window == nil {
+            let window = NSWindow(contentRect: .zero, styleMask: [.titled, .closable], backing: .buffered, defer: false)
+            window.title = "DictateMute"
+            window.isReleasedWhenClosed = false
+            window.contentView = NSHostingView(rootView: MenuBarView(engine: engine, updater: updater))
+            window.center()
+            self.window = window
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        window?.makeKeyAndOrderFront(nil)
     }
 
     func applicationWillTerminate(_ notification: Notification) {
