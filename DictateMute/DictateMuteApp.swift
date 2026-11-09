@@ -34,7 +34,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     let engine = MuteEngine()
 
     /// Sparkle checks the appcast on GitHub for new versions.
-    let updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+    private let userDriverDelegate = UpdateDialogDelegate()
+    lazy var updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: userDriverDelegate)
     var updater: SPUUpdater { updaterController.updater }
 
     private var window: NSWindow?
@@ -78,4 +79,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // Never leave someone muted because the app quit mid-dictation.
         engine.releaseMute()
     }
+}
+
+/// Customizes Sparkle's update dialog.
+final class UpdateDialogDelegate: NSObject, SPUStandardUserDriverDelegate {
+    /// No Version History button. Taylor's rule for every app: never show one.
+    func standardUserDriverShouldShowVersionHistory(for item: SUAppcastItem) -> Bool { false }
 }
